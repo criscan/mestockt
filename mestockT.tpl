@@ -40,9 +40,11 @@ DATA_SECTION
  init_ivector nanos_fts(1,N_fts)
  init_matrix Ccru(1,N_fts,1,ntallas)
 
+
  // !! ad_comm::change_datafile_name("mestockL.ctl");
  init_number sigmaR
  init_number Roprior
+
  number  log_Ro_prior
  !! log_Ro_prior = log(Roprior);
 
@@ -77,7 +79,7 @@ DATA_SECTION
   !! log_k_prior = log(Par_bio(2));
   !! log_Lo_prior = log(Par_bio(3));
   !! log_aedad_prior = log(Par_bio(4)+1e-10);
-  !! log_bedad_prior = log(Par_bio(5)+1e-10);
+  !! log_bedad_prior = log(Par_bio(5));
   !! log_M_prior = log(Par_bio(6));
   !! log_h_prior = log(Par_bio(7));
   !! log_b_prior = log(Par_bio(8));
@@ -86,7 +88,9 @@ DATA_SECTION
  init_number s1prior
  init_number s2prior
  init_vector cv_parsel(1,3) // CV de las priors Selectividad
-
+ init_int fases_flo1 // fases Sel Flota
+ init_int fases_flo2 // 
+ init_int fases_flo3 //
 
  number log_L50prior
  number log_s1prior
@@ -101,6 +105,10 @@ DATA_SECTION
  init_number s1priorc
  init_number s2priorc
  init_vector cv_parselc(1,3) // CV de las priors Selectividad
+ init_int fases_cru1 // fases Sel crucero
+ init_int fases_cru2 // 
+ init_int fases_cru3 // 
+
 
  number log_L50priorc
  number log_s1priorc
@@ -120,15 +128,9 @@ DATA_SECTION
  init_vector yqbloques(1,nqbloques)
 
 
-// define fases de estimacion-----------------------------
+// define otras fases de estimacion-----------------------------
  init_int    opt_qf
  init_int    opt_qc
- init_int    opt1_fase
- init_int    opt_tiposel
-
- init_int    opt1_fasec
- init_int    opt_tiposelc
-
  init_int    opt_F
  init_int    opt_devRt
  init_int    opt_devNo
@@ -139,7 +141,10 @@ DATA_SECTION
  init_int    npbr
  init_vector pbr(1,npbr)
  init_int ntime_sim
+
+
  int reporte_mcmc 
+
 
 INITIALIZATION_SECTION
 
@@ -165,13 +170,13 @@ PARAMETER_SECTION
 
 // selectividad paramétrica a la talla común
  
- init_vector log_L50(1,nbloques1,opt1_fase)  
- init_vector log_sigma1(1,nbloques1,opt1_fase)
- init_vector log_sigma2(1,nbloques1,opt_tiposel)
+ init_vector log_L50(1,nbloques1,fases_flo1)  
+ init_vector log_sigma1(1,nbloques1,fases_flo2)
+ init_vector log_sigma2(1,nbloques1,fases_flo3)
 
- init_number log_L50c(opt1_fasec)  
- init_number log_sigma1c(opt1_fasec)
- init_number log_sigma2c(opt_tiposelc)
+ init_number log_L50c(fases_cru1)  
+ init_number log_sigma1c(fases_cru2)
+ init_number log_sigma2c(fases_cru3)
 
 // parametros reclutamientos y mortalidades)
  init_number log_Ro(opt_Ro)
@@ -237,9 +242,6 @@ PARAMETER_SECTION
  vector cv_capt(1,ntime)
  vector cv_bcru(1,ntime)
  vector nm_c(1,ntime)
-
- vector Madage(1,nedades)
- vector Wage(1,nedades)
 
 
  matrix S1(1,nbloques1,1,nedades)
@@ -318,12 +320,11 @@ PARAMETER_SECTION
  objective_function_value f
   
  sdreport_vector BD(1,ntime) // 
- sdreport_vector F_mort(1,ntime) // 
  sdreport_vector BT(1,ntime) // 
  sdreport_vector RPR(1,ntime) // 
  sdreport_vector RPRlp(1,ntime) //
- sdreport_vector Rest(1,ntime) //
  sdreport_vector Redstock(1,npbr)
+ 
  sdreport_number SSBo
 // sdreport_vector RPRp(1,npbr) // RPR proyectado en la simulacion
 
@@ -354,7 +355,6 @@ PRELIMINARY_CALCS_SECTION
  Wmed=exp(lnaw)*pow(Tallas,bw);
  rango=L95ms-L50ms;
  msex=1/(1+exp(-log(19)*(Tallas-L50ms)/rango));
-
 
 RUNTIME_SECTION
  maximum_function_evaluations 500,2000,5000
@@ -462,21 +462,13 @@ FUNCTION Eval_selectividad
       }
  }
 
-//----------------------------------------------------------------------
-
-
- Wage=exp(lnaw)*pow(mu_edad,bw);
- Madage=1/(1+exp(-log(19)*(mu_edad-L50ms)/rango));
-
-//----------------------------------------------------------------------
 
 
 FUNCTION Eval_mortalidades
 
  M=exp(log_M);
- F_mort=mfexp(log_F);
 
- F=elem_prod(Sel,outer_prod(F_mort,Unos_edad));
+ F=elem_prod(Sel,outer_prod(mfexp(log_F),Unos_edad));
 
  Z=F+M;
 
@@ -513,6 +505,7 @@ FUNCTION Eval_abundancia
  BD(1)=sum(elem_prod(elem_prod(N(1),exp(-dt(1)*Z(1)))*Prob_talla,elem_prod(msex,Wmed)));
  Rpred=exp(log_Ro);//
 
+
 // se estima la sobrevivencia por edad(a+1) y año(t+1)
  for (i=1;i<ntime;i++)
  {
@@ -528,9 +521,6 @@ FUNCTION Eval_abundancia
 
      BD(i+1)=sum(elem_prod(elem_prod(N(i+1),exp(-dt(1)*Z(i+1)))*Prob_talla,elem_prod(msex,Wmed)));
  }
-
- Rest=column(N,1);
-
 
 
 FUNCTION Eval_deinteres
@@ -596,6 +586,7 @@ FUNCTION Eval_capturas_predichas
  ppred_cru(j)=NVcru(nanos_fts(j)-ymin+1)/sum(NVcru(nanos_fts(j)-ymin+1));
  }
 
+
  Lmed_pred_cru=Tallas*trans(ppred_cru);
  Lmed_obs_cru=Tallas*trans(pobs_cru);
 
@@ -641,6 +632,7 @@ FUNCTION Eval_funcion_objetivo
 
 
  likeval(3)=0.5*norm2(elem_div(log(elem_div(Desemb,pred_Desemb)),cv_capt));// desemb
+
 
  for (int i=1;i<=N_ftc;i++){
  suma4+=-nm(nanos_ftc(i)-ymin+1)*sum(elem_prod(pobs(i),log(ppred(i)+1e-10)));
@@ -691,7 +683,6 @@ FUNCTION Eval_funcion_objetivo
  if(last_phase){
  f=(sum(likeval)+sum(pri));}
  
-
 
 
 FUNCTION  Eval_CTP
@@ -843,7 +834,7 @@ REPORT_SECTION
 
  report << "-----------------------------------------------" << endl;
  report << "Componentes de log-verosimilitud" << endl;
- report << " CPUE    Cruceros  Desemb   Prop_f   Prop_c    dev_Rt   dev_No"<<endl;
+ report << " CPUE    Desemb   Prop_f   Prop_c    dev_Rt   dev_No"<<endl;
  report << likeval << endl;
  report << "-----------------------------------------------" << endl;
  report << "Edades"<< endl;
@@ -875,6 +866,20 @@ REPORT_SECTION
  report << "---------------------------------------------------------------" << endl;
  report << "Probabilidad de la talla a la edad" << endl;
  report << Prob_talla << endl;
+ report << "---------------------------------------------------------------" << endl;
+ report << "Multiplicador de F" << endl;
+ report << pbr << endl;
+ report << "---------------------------------------------------------------" << endl;
+ report << "Biomasa desovante proyectada para cada mF" << endl;
+ report << "-----------------------------------------------" << endl;
+ report << trans(Bp) << endl;
+ report << "Capturas proyectadas para cada mF" << endl;
+ report << "-----------------------------------------------" << endl;
+ report << trans(Yp) << endl;
+ report << "Mortalidad por pesca proyectada para cada mF" << endl;
+ report << "-----------------------------------------------" << endl;
+ report << trans(Fproy) << endl;
+
 
 
 
@@ -928,12 +933,10 @@ FINAL_SECTION
  print_R << "Reclutamientos" << endl;
  print_R << Rpred<< endl;
  print_R << column(N,1)<< endl;
- print_R << Rest.sd<< endl;
  print_R << "Dev_log_R" << endl;
  print_R << dev_log_Ro<< endl;
  print_R << "Mort_F " << endl;
- print_R << F_mort << endl;
- print_R << F_mort.sd << endl;
+ print_R << exp(log_F) << endl;
  print_R << "SPR" << endl;
  print_R << RPRlp << endl;
  print_R << RPR << endl;
@@ -977,30 +980,3 @@ FINAL_SECTION
  print_R << S1<< endl;
  print_R << "Sel_srv"<< endl;
  print_R << Selc<< endl;
- print_R << "Madurez_edad"<< endl;
- print_R << Madage<<endl;
- print_R << "Peso_edad"<< endl;
- print_R << Wage<<endl;
- print_R << "M"<< endl;
- print_R << M<<endl;
- print_R << "h"<< endl;
- print_R << h<<endl;
- print_R <<"dts"<<endl;
- print_R <<dt(1)<<endl;
- print_R << "Mult_F" << endl;
- print_R << pbr << endl;
- print_R << "Bio_proy" << endl;
- print_R << trans(Bp) << endl;
- print_R << "Capt_proy" << endl;
- print_R << trans(Yp) << endl;
- print_R << "F_proy" << endl;
- print_R << trans(Fproy) << endl;
- print_R << "Red_stock" << endl;
- print_R << Redstock << endl;
- print_R << Redstock.sd << endl;
- print_R << "cv_cpue" << endl;
- print_R << cv_cpue(1) << endl;
- print_R << "cv_capt" << endl;
- print_R << cv_capt(1) << endl;
- print_R << "cv_cru" << endl;
- print_R << cv_bcru(1) << endl;

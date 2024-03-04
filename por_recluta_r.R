@@ -10,6 +10,7 @@ por_recluta_r<-function(Tmax,Sel,Madage,Wage,tar,h,M,dt){
   Fcr=seq(0.001,5*M,0.01)
   Eprom=Fcr
   B=Fcr
+  BE=Fcr
   Y=Fcr
   R=Fcr
   
@@ -41,11 +42,14 @@ por_recluta_r<-function(Tmax,Sel,Madage,Wage,tar,h,M,dt){
     B[j]=alfa*sum(N*Madage*Wage*exp(-dt*Z))-beta
     R[j]=alfa*B[j]/(beta+B[j])
     Y[j]=R[j]*sum(C*Wage)
+    BE[j]=sum(N*Sel*Wage*exp(-0.5*Z))
+    
 
     
     if (B[j]/B[1]>0.99*tar){Ftar=Fcr[j]
     BPRtar=B[j]
     YPRtar=Y[j]
+    BEtar=BE[j]
     }
     
     if (Y[j]>aux){
@@ -59,7 +63,7 @@ por_recluta_r<-function(Tmax,Sel,Madage,Wage,tar,h,M,dt){
   }
   
 
-  outputs=data.frame(Fcr, B, Y, Ftar, BPRtar, YPRtar, FRMS, BRMS, YRMS)
+  outputs=data.frame(Fcr, B, Y, Ftar, BPRtar, YPRtar, FRMS, BRMS, YRMS, BEtar)
 
   return(outputs)  
 

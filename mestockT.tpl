@@ -141,7 +141,6 @@ DATA_SECTION
  init_int    opt_qf
  init_int    opt_F
  init_int    opt_devRt
- init_int    opt_devNo
  init_int    opt_Ro
 
  init_number  Regla
@@ -189,7 +188,6 @@ PARAMETER_SECTION
 // parametros reclutamientos y mortalidades)
  init_number log_Ro(opt_Ro)
  init_bounded_dev_vector dev_log_Ro(1,ntime,-10,10,opt_devRt)
- init_bounded_vector dev_log_No(1,nedades,-10,10,opt_devNo)
  init_bounded_vector log_F(1,ntime,-20,1.0,opt_F) // log  mortalidad por pesca por flota
 
 // capturabilidades
@@ -524,12 +522,6 @@ FUNCTION Eval_abundancia
      {No(j)=No(j-1)*exp(-1.*M);}
      No(nedades)=No(nedades)/(1-exp(-1.*M));
  
- // Condición inicial en equilibrio suponiendo reclutamiento virginal
-  /*
- for (int j=2;j<=nedades;j++)
-     {No(j)=No(j-1)*exp(-1.*Z(1,j-1));}
-     No(nedades)=No(nedades)/(1-exp(-1.*Z(1,nedades)));
- */
      
   SSBo=sum(elem_prod(No*exp(-dt(1)*M)*Prob_talla,elem_prod(msex,Wmed)));// Biomasa virginal de LP
   alfa=4*h*exp(log_Ro)/(5*h-1);//
@@ -537,7 +529,12 @@ FUNCTION Eval_abundancia
 
 
 // Abundancia inicial
- N(1)=elem_prod(No,exp(dev_log_No));
+ // Condición inicial en equilibrio suponiendo reclutamiento virginal
+ for (int j=2;j<=nedades;j++)
+     {No(j)=No(j-1)*exp(-1.*Z(1,j-1));}
+     No(nedades)=No(nedades)/(1-exp(-1.*Z(1,nedades)));
+
+ N(1)=No; //elem_prod(No,exp(dev_log_No));
  BD(1)=sum(elem_prod(elem_prod(N(1),exp(-dt(1)*Z(1)))*Prob_talla,elem_prod(msex,Wmed)));
  Rpred=exp(log_Ro);//
 
@@ -694,8 +691,8 @@ FUNCTION Eval_funcion_objetivo
  if(active(dev_log_Ro)){
  likeval(6)=1./(2*square(sigmaR))*norm2(dev_log_Ro);}
 
- if(active(dev_log_No)){
- likeval(7)=1./(2*square(sigmaR))*norm2(dev_log_No);}
+ //if(active(dev_log_No)){
+ //likeval(7)=1./(2*square(sigmaR))*norm2(dev_log_No);}
 
 
 
@@ -1013,7 +1010,7 @@ FINAL_SECTION
  print_R << "Frecs_srv_pred"<< endl;
  print_R << ppred_cru<< endl;
  print_R << "Sel_f"<< endl;
- print_R << S1<< endl;
+ print_R << Sel<< endl;
  print_R << "Sel_srv"<< endl;
  print_R << Selc<< endl;
  print_R << "Madurez_edad"<< endl;
@@ -1028,6 +1025,21 @@ FINAL_SECTION
  print_R << Linf<<" "<<k<<" "<<M<<" "<<mu_edad(1)<<" "<<exp(log_aedad)<<" "<<exp(log_bedad)<<" "<<h<<endl;
  print_R <<"dts"<<endl;
  print_R <<dt(1)<<endl;
+
+ print_R<<"log_L50f"<<endl;
+ print_R<<log_L50<<endl;
+ print_R<<"log_s1"<<endl;
+ print_R<<log_sigma1<<endl;
+ print_R<<"log_s2"<<endl;
+ print_R<<log_sigma2<<endl;
+ 
+ print_R<<"log_L50c"<<endl;
+ print_R<<log_L50c<<endl;
+ print_R<<"log_s1c"<<endl;
+ print_R<<log_sigma1c<<endl;
+ print_R<<"log_s2c"<<endl;
+ print_R<<log_sigma2c<<endl;
+
  print_R << "Mult_F" << endl;
  print_R << pbr << endl;
  print_R << "Bio_proy" << endl;

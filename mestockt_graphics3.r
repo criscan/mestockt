@@ -1,8 +1,8 @@
 
-rm(list=ls()) # erasure all objects
-#system('mestockt -ind mistock.dat -nox')  # for model running
-system('mestockt -ind datos.dat -nox')  # for model running
-
+ rm(list=ls()) # erasure all objects
+ #system('mestockt -ind Botella4.dat -nox')  # for model running
+# system('mestockt -nox')  # for model running
+ 
 
 source('read.admb.R')
 source('read.admbFit.R')
@@ -23,42 +23,110 @@ box()
 
 #Ajustes--------------------------------------------------------------------------
 
-par(mfrow = c(2, 1))
+par(mfrow = c(3, 3))
 sim=20
   
 max=max(CPUE);
 ubi=which(CPUE[1,]>0)
+cv_cpue_post=sd(log(CPUE[1,ubi])-log(CPUE[2,ubi]))
+rmse_cpue=cv_cpue_post
 
-cv=0.15;
-X0=Yrs[ubi]
-Y0=CPUE[1,ubi]
-
-plot(Yrs[ubi],(CPUE[1,ubi]),ylab="Indice",xlab="Año",main="CPUE",ylim = c(0,1.3*max(CPUE[1,])),
+plot(Yrs[ubi],(CPUE[1,ubi]),ylab="Indice",xlab="Año",main="CPUE",ylim = c(0,max((CPUE[which(CPUE>0)]))),
      pch=sim,type="b",cex=1.5)
+
+X0=Yrs[ubi]
+Y0=CPUE[2,ubi]
+cvF=cv_cpue
+li=Y0-1.96*cvF*Y0
+ls=Y0+1.96*cvF*Y0
+
+x=c(X0,X0[seq(length(X0),1,-1)])
+y=c(li,ls[seq(length(ls),1,-1)])
+polygon(x,y,col="#DCDCDC",border="#DCDCDC")
+
 
 lines(Yrs[ubi],(CPUE[2,ubi]),col="red",lwd=2)
-arrows(X0,Y0-1.96*cv*Y0,X0,Y0+1.96*cv*Y0,
-       length = 0.05, code = 3, angle = 90, lwd=1)
+lines(Yrs[ubi],(CPUE[1,ubi]),pch=sim,type="b",cex=1.5)
+
+barplot((log(CPUE[1,ubi])-log(CPUE[2,ubi]))/sd(log(CPUE[1,ubi])-log(CPUE[2,ubi]))~Yrs[ubi],ylab="Residual std",xlab="Año",
+        main=paste("residual CPUE (RMSE=",round(rmse_cpue,2),")"),col="gray")
+
+abline(h=0,col="red",lwd=2)
+abline(h=3*cv_cpue_post,col="green",lwd=2)
+abline(h=-3*cv_cpue_post,col="green",lwd=2)
+
+hist((log(CPUE[1,ubi])-log(CPUE[2,ubi]))/sd(log(CPUE[1,ubi])-log(CPUE[2,ubi])),xlab="Residual std",main="residual CPUE")
 
 
+
+# plot(Yrs,(Desembarques[1,]),ylab="Toneladas",xlab="Año",main="Desembarque",ylim = c(0,max((Desembarques))),
+#      pch=sim,type="b",cex=1.5)
+# lines(Yrs,(Desembarques[2,]),col="red",lwd=2)
+
+maxi=max(Surveys[1,]);
 ubi=which(Surveys[1,]>0)
-cv=0.15;
-X0=Yrs[ubi]
-Y0=Surveys[1,ubi]
-plot(Yrs[ubi],Surveys[2,ubi],type="l",col="red",lwd=2,ylim = c(0,1.3*max(Surveys[1,])),ylab="Indice",xlab="Año",
+cv_acus_post=sd(log(Surveys[1,ubi])-log(Surveys[2,ubi]))
+rmse_acus=cv_acus_post
+
+plot(Yrs,Surveys[2,],type="l",col="red",lwd=2,ylim = c(0,1.2*max(Surveys)),ylab="Indice",xlab="Año",
      main="Crucero",xlim=c(Yrs[min(which(Surveys[1,]>0))],Yrs[max(which(Surveys[1,]>0))]))
+X0=Yrs
+Y0=Surveys[2,]
+cvF=cv_cru
+
+li=Y0-1.96*cvF*Y0
+ls=Y0+1.96*cvF*Y0
+x=c(X0,X0[seq(length(X0),1,-1)])
+y=c(li,ls[seq(length(ls),1,-1)])
+polygon(x,y,col="#DCDCDC",border="#DCDCDC")
+
 lines(Yrs[ubi],(Surveys[1,ubi]),pch=sim,type="b",cex=1.5)
-arrows(X0,Y0-1.96*cv*Y0,X0,Y0+1.96*cv*Y0,
-       length = 0.05, code = 3, angle = 90, lwd=1)
+lines(Yrs,Surveys[2,],type="l",col="red",lwd=2)
 
 
-plot(Lmed_flo[1,],Lmed_flo[2,],ylab="Talla promedio",xlab="Año",main="Talla promedio flota",
+barplot((log(Surveys[1,ubi])-log(Surveys[2,ubi]))/sd(log(Surveys[1,ubi])-log(Surveys[2,ubi]))~Yrs[ubi],ylab="Residual std",xlab="Año",
+        main=paste("residual Crucero (RMSE=",round(rmse_acus,2),")"),col="gray")
+
+
+abline(h=0,col="red",lwd=2)
+abline(h=3*cv_acus_post,col="green",lwd=2)
+abline(h=-3*cv_acus_post,col="green",lwd=2)
+
+hist((log(Surveys[1,ubi])-log(Surveys[2,ubi]))/sd(log(Surveys[1,ubi])-log(Surveys[2,ubi])),xlab="Residual std",main="residual Surveys")
+
+
+
+
+sim=20
+min=min(Lmed_flo[2:3,])
+max=max(Lmed_flo[2:3,])
+ubi=which(Surveys[1,]>0)
+rmse_Lmed=sd(log(Lmed_flo[2,])-log(Lmed_flo[3,]))
+
+plot(Lmed_flo[1,],Lmed_flo[2,],ylab="Talla promedio",xlab="Año",main="Talla promedio flota",ylim = c(min,max),
      pch=sim,type="b",cex=1.5)
+
+X0=Lmed_flo[1,]
+Y0=Lmed_flo[3,]
+cvF=0.02
+li=Y0-1.96*cvF*Y0
+ls=Y0+1.96*cvF*Y0
+
+x=c(X0,X0[seq(length(X0),1,-1)])
+y=c(li,ls[seq(length(ls),1,-1)])
+polygon(x,y,col="#DCDCDC",border="#DCDCDC")
+
+
 lines(Lmed_flo[1,],Lmed_flo[3,],lwd=2,col="red")
+lines(Lmed_flo[1,],Lmed_flo[2,],pch=sim,type="b",cex=1.5)
 
-plot(Lmed_srv[1,],Lmed_srv[2,],ylab="Talla promedio",xlab="Año",main="Talla promedio crucero",
-     pch=sim,type="b",cex=1.5)
-lines(Lmed_srv[1,],Lmed_srv[3,],lwd=2,col="red")
+
+barplot((Lmed_flo[2,]-Lmed_flo[3,])/sd(Lmed_flo[2,]-Lmed_flo[3,])~Lmed_flo[1,],ylab="Residual std",xlab="Año",
+        main=paste("residual Lmed (RMSE=",round(rmse_Lmed,2),")"),col="gray")
+abline(h=0,col="red",lwd=2)
+
+hist((Lmed_flo[2,]-Lmed_flo[3,])/sd(Lmed_flo[2,]-Lmed_flo[3,]),xlab="Residual std",main="residual Lmed_flo")
+
 
 
 #Comps_tallas_marginal----------------------------------------------------------------------
@@ -76,9 +144,13 @@ lines(Tallas,Frec_marg_srv[2,],col="red",lwd=2)
 
 #Comps_tallas_f----------------------------------------------------------------------
 
-par(mfcol = c(5, 3))
+n=length(Lmed_flo[1,])
+filas=4 
+cols=4
+dl=0.5*(Tallas[2]-Tallas[1])
 
-for (i in 1:length(Lmed_flo[1,]))
+par(mfcol = c(5, 4))
+for (i in 1:n)
 {
   plot(Tallas-dl,Frecs_capt_obs[i,],main=paste(Lmed_flo[1,i]),type="s",lwd=3, col="gray",ylab="", xlab="Talla",
                ylim=c(0,max(c(Frecs_capt_obs,Frecs_capt_pred))))
@@ -89,9 +161,15 @@ for (i in 1:length(Lmed_flo[1,]))
 
 #Comps_tallas_s----------------------------------------------------------------------
 
+n=length(Lmed_srv[1,])
+filas=2
+cols=round(n/filas)
+if (cols==0)
+{cols=1}
+
 par(mfcol = c(2, 2))
 
-for (i in 1:length(Lmed_srv[1,]))
+for (i in 1:n)
 {
 
   plot(Tallas-dl,Frecs_srv_obs[i,],main=paste(c(Lmed_srv[1,i]),"c"),type="s",lwd=3, col="gray",
@@ -138,8 +216,7 @@ lines(Tallas,No[1]*Prob_talla[1,],col="red",lwd=2)
 text(round(L_edad[1],2),100,paste(round(L_edad[1],2)),col="blue")
 
 
-plot(L_edad,type="b", xlab="Edad relativa",ylab="Talla",main="Crecimiento individual",
-     ylim=c(0,max(L_edad))*1.05)
+plot(L_edad[1:nedades-1],L_edad[2:nedades],type="b", xlab="L(edad)",ylab="L(edad+1)",main="Crecimiento individual")
 abline(v=L_edad[1:nedades-1],lty=2, col="gray")
 abline(h=L_edad[2:nedades],lty=2, col="gray")
 

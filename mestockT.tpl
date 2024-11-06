@@ -175,7 +175,7 @@ INITIALIZATION_SECTION
   
 PARAMETER_SECTION
 
-// selectividad paramétrica a la talla común
+// selectividad paramÃ©trica a la talla comÃºn
  
  init_vector log_L50(1,nbloques1,fases_flo1)  
  init_vector log_sigma1(1,nbloques1,fases_flo2)
@@ -355,8 +355,8 @@ PRELIMINARY_CALCS_SECTION
  edades.fill_seqadd(minedad,1);
 
  Unos_edad=1;// lo uso en  operaciones matriciales con la edad
- Unos_anos=1;// lo uso en operaciones matriciales con el año
- Unos_tallas=1;// lo uso en operaciones matriciales con el año
+ Unos_anos=1;// lo uso en operaciones matriciales con el aÃ±o
+ Unos_tallas=1;// lo uso en operaciones matriciales con el aÃ±o
  reporte_mcmc=0;
 
 
@@ -529,7 +529,7 @@ FUNCTION Eval_abundancia
 
 
 // Abundancia inicial
- // Condición inicial en equilibrio suponiendo reclutamiento virginal
+ // CondiciÃ³n inicial en equilibrio suponiendo reclutamiento virginal
  for (int j=2;j<=nedades;j++)
      {No(j)=No(j-1)*exp(-1.*Z(1,j-1));}
      No(nedades)=No(nedades)/(1-exp(-1.*Z(1,nedades)));
@@ -539,7 +539,7 @@ FUNCTION Eval_abundancia
  Rpred=exp(log_Ro);//
 
 
-// se estima la sobrevivencia por edad(a+1) y año(t+1)
+// se estima la sobrevivencia por edad(a+1) y aÃ±o(t+1)
  for (i=1;i<ntime;i++)
  {
 
@@ -564,7 +564,7 @@ FUNCTION Eval_deinteres
 // Rutina para calcular RPR
  Nv=N;// solo para empezar los calculos
 
-// se estima la sobrevivencia por edad(a+1) y año(t+1)
+// se estima la sobrevivencia por edad(a+1) y aÃ±o(t+1)
  for (int i=1;i<ntime;i++)
  {
      Nv(i+1)(2,nedades)=++Nv(i)(1,nedades-1)*exp(-1.0*M);
@@ -596,14 +596,14 @@ FUNCTION Eval_biomasas
 
 FUNCTION Eval_capturas_predichas
 
-// matrices de capturas predichas por edad y año
+// matrices de capturas predichas por edad y aÃ±o
  pred_Ctot_a=elem_prod(elem_div(F,Z),elem_prod(1.-S,N));
  pred_Ctot=pred_Ctot_a*Prob_talla;
 
-// vectores de desembarques predichos por año
+// vectores de desembarques predichos por aÃ±o
  pred_Desemb=pred_Ctot*Wmed;
 
-// matrices de proporcion de capturas por talla y año
+// matrices de proporcion de capturas por talla y aÃ±o
  pobs=elem_div(Ctot,outer_prod(rowsum(Ctot),Unos_tallas));
 
  if(N_ftc>0){
@@ -616,7 +616,7 @@ FUNCTION Eval_capturas_predichas
  Lmed_pred=Tallas*trans(ppred);
  }
 
-// matrices de proporcion de capturas por talla y año CRUCEROS
+// matrices de proporcion de capturas por talla y aÃ±o CRUCEROS
  pobs_cru=elem_div(Ccru,outer_prod(rowsum(Ccru),Unos_tallas));
 
  if(N_fts>0){
@@ -739,7 +739,7 @@ FUNCTION  Eval_CTP
   Sp=S(ntime);
   Bref=BD(ntime);
 
-   for (int j=1;j<=ntime_sim;j++){ // ciclo de años
+   for (int j=1;j<=ntime_sim;j++){ // ciclo de aÃ±os
 
     plus=Np(nedades)*Sp(nedades);
     if(j<=minedad){
@@ -780,10 +780,10 @@ FUNCTION  Eval_CTP
  
 REPORT_SECTION
 
- report << "Modelo Evaluación de Stock con datos de Tallas (MestockT)" << endl;
+ report << "Modelo EvaluaciÃ³n de Stock con datos de Tallas (MestockT)" << endl;
  report << "cristian.canales.r@pucv.cl" << endl;
  report << "-----------------------------------------------------------"<<endl;
- report << "Años" << endl;
+ report << "AÃ±os" << endl;
  report << yrs << endl;
  report << "Desemb_obs & pred" << endl;
  report << Desemb << endl;
@@ -791,7 +791,7 @@ REPORT_SECTION
  report << "CPUE_obs & pred" << endl;
  report << CPUE << endl;
  report << pred_CPUE << endl;
- report << "Campañas_obs & pred" << endl;
+ report << "CampaÃ±as_obs & pred" << endl;
  report << Bcru << endl;
  report << pred_Bcru << endl;
  report << "Biomasa_desovante/reproductiva" << endl;
@@ -807,7 +807,7 @@ REPORT_SECTION
  report << dev_log_Ro<< endl;
  report << "Mor por pesca anual F " << endl;
  report << exp(log_F) << endl;
- report << "Reducción del stock (SPR, B/B0) de largo plazo y dinámico" << endl;
+ report << "ReducciÃ³n del stock (SPR, B/B0) de largo plazo y dinÃ¡mico" << endl;
  report << RPRlp << endl;
  report << RPR << endl;
  report << "-----------------------------------------------" << endl;
@@ -817,10 +817,10 @@ REPORT_SECTION
  report << "Frecs tallas Capturas_predichas"<< endl;
  report << ppred<< endl;
  report << "-----------------------------------------------" << endl;
- report << "Frecs tallas campañas/cruceros"<< endl;
+ report << "Frecs tallas campaÃ±as/cruceros"<< endl;
  report << pobs_cru<< endl;
  report << "-----------------------------------------------" << endl;
- report << "Frecs tallas campañas/cruceros_predichas"<< endl;
+ report << "Frecs tallas campaÃ±as/cruceros_predichas"<< endl;
  report << ppred_cru<< endl;
  report << "---------------------------------------------------------------" << endl;
  report << "B0   R0    alfa(SR)   beta(SR)" << endl;
@@ -833,7 +833,7 @@ REPORT_SECTION
  report << mu_edad<< endl;
  report << sigma_edad<< endl;
  report << "---------------------------------------------------------------" << endl;
- report << "B0 anual (dinámica)" << endl;
+ report << "B0 anual (dinÃ¡mica)" << endl;
  report << BDo << endl;
  report << "---------------------------------------------------------------" << endl;
  report << "Loo    k    Lo      a0        cv_edad    M    h" << endl;
@@ -859,7 +859,7 @@ REPORT_SECTION
       cuenta1+=1;
    }}
 
- report << "Tamaño muestra ideal flota " <<endl;
+ report << "TamaÃ±o muestra ideal flota " <<endl;
  report <<pow(nm1,1/cuenta1)<< endl;
 
   suma1=0; suma2=0;nm1=1;cuenta1=0;
@@ -874,7 +874,7 @@ REPORT_SECTION
    }}
 
 
- report << "Tamaño muestra ideal campaña/crucero " <<endl;
+ report << "TamaÃ±o muestra ideal campaÃ±a/crucero " <<endl;
  report <<pow(nm1,1/cuenta1)<< endl;
 
  report << "-----------------------------------------------" << endl;
@@ -885,7 +885,7 @@ REPORT_SECTION
  report << "Edades"<< endl;
  report << edades<< endl;
  report << "-----------------------------------------------" << endl;
- report<<  "Abundancia a la edad por año"<<endl;
+ report<<  "Abundancia a la edad por aÃ±o"<<endl;
  report<<N<<endl;
  report << "---------------------------------------------------------------" << endl;
  report<<  "Bloques de selectividad a la edad"<<endl;
@@ -897,16 +897,16 @@ REPORT_SECTION
  report<<"Madurez a la talla"<<endl;
  report<<msex<<endl;
  report << "---------------------------------------------------------------" << endl;
- report<<"Mort por pesca a la edad por año"<<endl;
+ report<<"Mort por pesca a la edad por aÃ±o"<<endl;
  report<<F<<endl;
  report << "---------------------------------------------------------------" << endl;
- report<<"Captura a la edad por año"<<endl;
+ report<<"Captura a la edad por aÃ±o"<<endl;
  report<<pred_Ctot_a<<endl;
  report << "---------------------------------------------------------------" << endl;
  report << "Tallas"<< endl;
  report << Tallas<< endl;
  report << "---------------------------------------------------------------" << endl;
- report << "Abundancia la talla poblacional por año" << endl;
+ report << "Abundancia la talla poblacional por aÃ±o" << endl;
  report << N*Prob_talla<< endl;
  report << "---------------------------------------------------------------" << endl;
  report << "Probabilidad de la talla a la edad" << endl;
@@ -1069,3 +1069,6 @@ FINAL_SECTION
  print_R <<objective_function_value::pobjfun->gmax<<endl;
  print_R << "FunObj" << endl;
  print_R <<  f << endl;
+ print_R << "B0_R0_alfa(SR)_beta(SR)" << endl;
+ print_R << SSBo <<" "<< No(1)<<" "<<alfa<<" "<<beta<< endl;
+

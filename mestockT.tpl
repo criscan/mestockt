@@ -1069,6 +1069,6 @@ FINAL_SECTION
  print_R <<objective_function_value::pobjfun->gmax<<endl;
  print_R << "FunObj" << endl;
  print_R <<  f << endl;
- print_R << "B0_R0_alfa(SR)_beta(SR)" << endl;
+ print_R << "B0_R0_alfaSR_betaSR" << endl;
  print_R << SSBo <<" "<< No(1)<<" "<<alfa<<" "<<beta<< endl;
 

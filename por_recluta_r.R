@@ -63,7 +63,8 @@ por_recluta_r<-function(Tmax,Sel,Madage,Wage,tar,h,M,dt){
   }
   
 
-  outputs=data.frame(Fcr, B, Y, Ftar, BPRtar, YPRtar, FRMS, BRMS, YRMS, BEtar)
+  outputs=list(Fcr=Fcr, B=B, Y=Y, Ftar=Ftar, BPRtar=BPRtar, YPRtar=YPRtar,
+               FRMS=FRMS, BRMS=BRMS, YRMS=YRMS, BEtar=BEtar)
 
   return(outputs)  
 

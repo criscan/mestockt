@@ -36,11 +36,13 @@ DATA_SECTION
  !!if(N_ftc>0)
  init_ivector nanos_ftc(1,N_ftc)
  init_matrix Ctot(1,N_ftc,1,ntallas)
+ 
 
  init_int N_fts
  !!if(N_ftc>0)
  init_ivector nanos_fts(1,N_fts)
  init_matrix Ccru(1,N_fts,1,ntallas)
+
 
  // !! ad_comm::change_datafile_name("mestockL.ctl");
  init_number sigmaR
@@ -140,12 +142,13 @@ DATA_SECTION
  init_int    opt_F
  init_int    opt_devRt
  init_int    opt_Ro
-
  init_number  Regla
+ 
 
  init_int    npbr
  init_vector pbr(1,npbr)
  init_int ntime_sim
+
 
  int reporte_mcmc 
 
@@ -834,8 +837,8 @@ REPORT_SECTION
  report << "B0 anual (dinámica)" << endl;
  report << BDo << endl;
  report << "---------------------------------------------------------------" << endl;
- report << "Loo    k    Lo      a0        cv_edad    M    h" << endl;
- report << exp(log_Linf) <<" "<<exp(log_k) <<" "<<exp(log_Lo) <<" "<<exp(log_aedad)<<" "<<exp(log_bedad)<<" "<<exp(log_M)<<" "<<exp(log_h)<<" "<<endl;
+ report << "Loo    k    Lo      a0        cv_edad    M    h   dt " << endl;
+ report << exp(log_Linf) <<" "<<exp(log_k) <<" "<<exp(log_Lo) <<" "<<exp(log_aedad)<<" "<<exp(log_bedad)<<" "<<exp(log_M)<<" "<<exp(log_h)<<" "<<dt(1)<<endl;
 
  report << "---------------------------------------------------------------" << endl;
  report << "b-hiperestabilidad   q_cpue    q_camp/cru" << endl;
@@ -965,6 +968,15 @@ FINAL_SECTION
  print_R << Rest.sd<< endl;
  print_R << "Dev_log_R" << endl;
  print_R << dev_log_Ro<< endl;
+
+ print_R << "N" << endl;
+ print_R <<  N << endl;
+ print_R << "F" << endl;
+ print_R <<  F << endl;
+ print_R << "Z" << endl;
+ print_R <<  Z << endl;
+
+
  print_R << "Mort_F " << endl;
  print_R << F_mort << endl;
  print_R << F_mort.sd << endl;
@@ -1019,8 +1031,9 @@ FINAL_SECTION
  print_R << Prob_talla<<endl;
  print_R << "No"<< endl;
  print_R << No<<endl;
- print_R << "Loo_k_M_Lo_alfa_beta_h"<< endl;
- print_R << Linf<<" "<<k<<" "<<M<<" "<<mu_edad(1)<<" "<<exp(log_aedad)<<" "<<exp(log_bedad)<<" "<<h<<endl;
+ print_R << "Loo_k_Lo_alfa_beta_M_h_dt"<< endl;
+ print_R << exp(log_Linf) <<" "<<exp(log_k) <<" "<<exp(log_Lo) <<" "<<exp(log_aedad)<<" "<<exp(log_bedad)<<" "<<exp(log_M)<<" "<<exp(log_h)<<" "<<dt(1)<<endl;
+
  print_R <<"dts"<<endl;
  print_R <<dt(1)<<endl;
 

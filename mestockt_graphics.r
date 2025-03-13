@@ -23,6 +23,8 @@ attach(data)
 #Ajustes--------------------------------------------------------------------------
 par(mfrow = c(3, 2))
 
+#Yrs=Yrs/4-0.25+2005  
+
 target=0.4
 
 plot(Yrs,Desembarques[1,]/1000, type="h", lwd=4, cex.lab=1, xlab="Año",ylab="Toneladas (miles)", col = "gray",ylim = c(0,max(Desembarques[1,]/1000)*1.1), 

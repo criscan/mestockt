@@ -920,8 +920,10 @@ FUNCTION Eval_mcmc
  if(reporte_mcmc == 0)
 
 
- mcmc_report<<"L50 Sigma1 Sigma2"<<endl; // imprime el encabezado
- mcmc_report<<exp(log_L50)<< ","<< exp(log_sigma1) <<","<<exp(log_sigma2)<<endl; // imprime las variables
+ mcmc_report<<"log_L50"<< ","<<"log_sigma1"<<","<<"log_sigma2"<<","<<"log_L50c"<< ","<<"log_sigma1c"<<","<<"log_sigma2c"<<","<<"log_qflo"<<","<<"log_qcru"<<endl; // imprime las variables
+ mcmc_report<<log_L50(nbloques1)<< ","<<log_sigma1(nbloques1) <<","<<log_sigma2(nbloques1)<<"," <<log_L50c(nbloques2)<< ","<<log_sigma1c(nbloques2) <<","<<log_sigma2c(nbloques2)<<","<<log_qflo(nqbloques)<<","<<log_qcru<<endl; // imprime las variables
+
+
 
  reporte_mcmc++;
 

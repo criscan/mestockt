@@ -250,9 +250,9 @@ if(length(Sel_f)==length(L_edad))
 
 ypr_out<-por_recluta_r(tmax,Selec,Madurez_edad,Peso_edad,target,h,M,dts)
 attach(ypr_out)
-Ftar=Ftar[1]
-BPRtar=BPRtar[1]
-YPRtar=YPRtar[1]
+Ftar=ypr_out$Ftar[1]
+BPRtar=ypr_out$BPRtar[1]
+YPRtar=ypr_out$YPRtar[1]
 
 par(mfrow = c(2, 1))
 

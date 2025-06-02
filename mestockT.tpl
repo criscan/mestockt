@@ -252,7 +252,7 @@ PARAMETER_SECTION
  vector Wage(1,nedades)
 
  matrix S1(1,nbloques1,1,nedades)
- matrix S2(1,nbloques1,1,nedades)
+ matrix S2(1,nbloques2,1,nedades)
 
  matrix Sel(1,ntime,1,nedades)
  matrix Selc(1,ntime,1,nedades)

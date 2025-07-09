@@ -539,7 +539,7 @@ FUNCTION Eval_abundancia
 
  N(1)=No; 
  BD(1)=sum(elem_prod(elem_prod(N(1),exp(-dt(1)*Z(1)))*Prob_talla,elem_prod(msex,Wmed)));
- Rpred=exp(log_Ro);//
+ Rpred=No(1);//
 
 
 // se estima la sobrevivencia por edad(a+1) y año(t+1)

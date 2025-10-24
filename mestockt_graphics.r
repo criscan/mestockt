@@ -6,10 +6,12 @@ source('read.admb.R')
 source('read.admbFit.R')
 source('por_recluta_r.R')
 
+
+
  name="datos"  # nombre del archivo sin extensión 
 
  
- system(paste('mestockt -ind ',name,'.dat -nox',sep=""))  # for model running
+# system(paste('mestockt -ind ',name,'.dat -nox',sep=""))  # for model running
  shell(paste('copy for_R.rep ',name,'.rep',sep=""))  # for model running
 
 
@@ -21,7 +23,7 @@ attach(data)
 
 
 #Ajustes--------------------------------------------------------------------------
-par(mfrow = c(2, 2))
+par(mfrow = c(3, 2))
 
 
 target=0.4
@@ -76,7 +78,7 @@ suave = smooth.spline(Yrs[ubi],Surveys[1,ubi], spar=0.6)
 lines(suave,col="green",lwd=2)
 
 
-par(mfrow = c(2, 1))
+#par(mfrow = c(2, 1))
 
 plot(Lmed_flo[1,],Lmed_flo[2,],ylab="Talla promedio",xlab="Año",main="Talla promedio capturas",
      pch=sim,type="b",cex=1.5)
@@ -99,10 +101,10 @@ par(mfcol = c(5, 3))
 
 for (i in 1:length(Lmed_flo[1,]))
 {
-  areaplot(Tallas,Frecs_capt_obs[i,],main=paste(Lmed_flo[1,i]),lwd=0.5, col="lightgray",ylab="", xlab="Talla",
+  areaplot(Tallas,Frecs_capt_obs[i,],main=paste("f",Lmed_flo[1,i]),lwd=0.5, col="lightgray",ylab="", xlab="Talla",
                ylim=c(0,max(c(Frecs_capt_obs[i,],Frecs_capt_pred[i,]))))
   lines(Tallas,Frecs_capt_pred[i,],col="red",lwd=2)
-  
+
 }
 
 
@@ -111,7 +113,7 @@ par(mfcol = c(5, 2))
 
 for (i in 1:length(Lmed_srv[1,]))
 {
-  areaplot(Tallas,Frecs_srv_obs[i,],main=paste(Lmed_srv[1,i]),lwd=0.5, col="lightgray",ylab="", xlab="Talla",
+  areaplot(Tallas,Frecs_srv_obs[i,],main=paste("c",Lmed_srv[1,i]),lwd=0.5, col="lightgray",ylab="", xlab="Talla",
            ylim=c(0,max(c(Frecs_srv_obs[i,],Frecs_srv_pred[i,]))))
   lines(Tallas,Frecs_srv_pred[i,],col="red",lwd=2)
 
@@ -178,14 +180,16 @@ par(mfrow=c(2,2))
 
 persp(Yrs,L_edad,Sel_f,theta=60,phi=40,expand=0.6, ticktype = "detailed",main="Selectividad capturas",
        xlab="Años",ylab="Talla",zlab="Proporcion",col = "lightblue", border=NA, shade=0.75)
-matplot(L_edad,t(Sel_f),type="l",lty=1,xlab="Talla",ylab="Proporción",lwd = 1,col="black")
+matplot(L_edad,t(Sel_f),type="l",lty=1,xlab="Talla",ylab="Proporción",lwd = 1,col="black",
+        ylim=c(0,1))
 lines(L_edad,Madurez_edad,col="red",lwd = 2)
 grid(nx = NULL, ny = NULL, lty = 2, col = "gray",lwd = 1)
 
 
 persp(Yrs,L_edad,Sel_srv,theta=60,phi=40,expand=0.6, ticktype = "detailed",main="Selectividad campañas",
       xlab="Años",ylab="Talla",zlab="Proporcion",col = "lightblue", border=NA, shade=0.75)
-matplot(L_edad,t(Sel_srv),type="l",lty=1,xlab="Talla",ylab="Proporción",lwd = 1,col="black")
+matplot(L_edad,t(Sel_srv),type="l",lty=1,xlab="Talla",ylab="Proporción",lwd = 1,col="black",
+        ylim=c(0,1))
 lines(L_edad,Madurez_edad,col="red",lwd = 2)
 grid(nx = NULL, ny = NULL, lty = 2, col = "gray",lwd = 1)
 
@@ -199,22 +203,23 @@ li=Reclutamientos[2,]-1.96*sdR
 ls=Reclutamientos[2,]+1.96*sdR
 nyrs=length(Biomasa_desovante)
 plot(Yrs,Reclutamientos[2,],ylim = c(0,max(Reclutamientos[2,]+1.96*sdR)*1.01),type="l",
-     ylab="Reclutamientos",xlab="Año",pch = 16)
+     ylab="Reclutamientos",xlab="Año",pch = 16, main="Reclutamientos")
 x=c(Yrs,Yrs[seq(length(Yrs),1,-1)])
 y=c(li,ls[seq(length(ls),1,-1)])
 polygon(x,y,col="#DCDCDC",border="#DCDCDC")
 lines(Yrs,Reclutamientos[2,],lwd="2")
 lines(Yrs,Reclutamientos[1,],lwd="2",col="red")
 
-plot(Yrs,Dev_log_R,type="l",xlab="Años",ylab="Desvio log_R",lwd=2,col="black")
-#grid(nx = NULL, ny = NULL, lty = 2, col = "gray",lwd = 1)
+plot(Yrs,Dev_log_R,type="l",xlab="Años",ylab="Desvio log_R",lwd=2,col="black",
+     main="Desvios reclutamientos")
 abline(h=0,col="red",lwd = 2)
-
+grid()
 
 
 #SR
 plot(Biomasa_desovante[1,],Reclutamientos[2,],type="b",xlab="Biomasa desovante (t)",
-     ylab="Reclutamiento",ylim=c(0,max(Reclutamientos[2,])),xlim=c(0,max(Biomasa_desovante[1,])))
+     ylab="Reclutamiento",ylim=c(0,max(Reclutamientos[2,])),xlim=c(0,max(Biomasa_desovante[1,])),
+     main="Relacion S/R")
 x=seq(0,max(Biomasa_desovante[1,]),B0_R0_alfaSR_betaSR[1]/50)
 y=B0_R0_alfaSR_betaSR[3]*x/(B0_R0_alfaSR_betaSR[4]+x)
 lines(x,y,col="red",lwd=2)
@@ -225,7 +230,7 @@ abline(v=B0_R0_alfaSR_betaSR[1]*target,lty=2,)
 
 
 plot(Tallas,Prob_talla[1,],type="l",xlab="Talla",ylab="Proporcion",
-     lwd=2,col="red")
+     lwd=2,col="red",main="Distr reclutamientos")
 grid(nx = NULL, ny = NULL, lty = 2, col = "gray",lwd = 1)
 
 
@@ -269,6 +274,9 @@ for (i in 1:length(Yrs))
   Ftar_vec[i]=ypr_out$Ftar[1]
 }
 
+
+#Biomasa y F con IC-----------------------------------------------------------
+
 par(mfrow = c(2, 1))
 
 li=Mort_F[1,]-1.96*Mort_F[2,]
@@ -283,10 +291,7 @@ y=c(li,ls[seq(length(ls),1,-1)])
 polygon(x,y,col="#DCDCDC",border="#DCDCDC")  
 
 lines(Yrs,Mort_F[1,],lwd=2)
-lines(Yrs,Ftar_vec, col = "red",lty = 2,lwd=2)
-
-#Biomasa y F con IC-----------------------------------------------------------
-
+lines(Yrs,Ftar_vec, col = "red",lty = 1,lwd=2)
 
 
 li=Biomasa_desovante[1,]-1.96*Biomasa_desovante[2,]
@@ -302,8 +307,8 @@ polygon(x,y,col="#DCDCDC",border="#DCDCDC")
 
 lines(Yrs,Biomasa_desovante[1,],lwd=2)
 B0=B[1]*R0
-abline(h = B0, col = "green",lty = 2,lwd=2)
-abline(h = target*B0, col = "red",lty = 2,lwd=2)
+abline(h = B0, col = "green",lty = 1,lwd=2)
+abline(h = target*B0, col = "red",lty = 1,lwd=2)
 abline(h = 0.5*target*B0, col = "darkviolet",lty = 2,lwd=2)
 
 
@@ -329,7 +334,7 @@ plot(Biomasa_desovante[1,]/BRMS,Mort_F[1,]/FRMS,pch = 16,ylab="F/Frms",xlab="B/B
 polygon(c(0,1,1,0),c(0,0,1,1),col="yellow1") #amarillo
 polygon(c(1,1.1*max(Biomasa_desovante[1,]/BRMS),1.1*max(Biomasa_desovante[1,]/BRMS),1),c(0,0,1,1),col="green") #verde
 polygon(c(1,1.1*max(Biomasa_desovante[1,]/BRMS),1.1*max(Biomasa_desovante[1,]/BRMS),1),c(1,1,1.5*max(Mort_F[1,]/FRMS),1.5*max(Mort_F[1,]/FRMS)),col="orange") #amarillo
-polygon(c(0,1,1,0),c(1,1,1.5*max(Mort_F[1,]/FRMS),1.5*max(Mort_F[1,]/FRMS)),col="red") #rojo
+polygon(c(0,1,1,0),c(1,1,1.5*max(Mort_F[1,]/FRMS),1.5*max(Mort_F[1,]/FRMS)),col=rgb(1, 0, 0, 0.7)) #rojo
 
 lines(Biomasa_desovante[1,]/BRMS,Mort_F[1,]/FRMS,pch = 16, type="o",col="darkgray",lty="dashed")
 text(Biomasa_desovante[1,]/BRMS*.95,Mort_F[1,]/FRMS,paste(Yrs),cex=0.8)
@@ -354,7 +359,8 @@ box()
 ubi=which(ypr_out$Y*R0==max(ypr_out$Y*R0))
 RMS=ypr_out$Y[ubi]*R0
 BRMSmax=ypr_out$B[ubi]*R0
-plot(ypr_out$B*R0,ypr_out$Y*R0,type="l",ylab="Rendimiento",xlab="Biomasa",lwd=2,col="blue",xlim=c(0,B0))
+plot(ypr_out$B*R0,ypr_out$Y*R0,type="l",ylab="Rendimiento",xlab="Biomasa",lwd=2,col="blue",xlim=c(0,B0),
+     main="Curva de producción")
 abline(h=RMS,col="green")
 abline(v=BRMSmax,col="green")
 
@@ -365,7 +371,7 @@ abline(v=BRMStar,col="magenta")
 text(BRMStar,RMStar,paste("(",round(BRMStar),",",round(RMStar),")"))
 text(BRMSmax,RMS,paste("(",round(BRMSmax),",",round(RMS),")"))
 text(BRMStar,0.1*RMStar,"40%B0")
-
+grid()
 
 #Proyecciones---------------------------------
 par(mfcol = c(2, 2))
@@ -414,7 +420,7 @@ text(x,y,paste(round(Mult_F,2)),cex=1.1)
 
 #-------------------------------------------------------------------------------------------
 par(mfrow = c(1, 2))
-barplot(Red_stock[1,]~Mult_F,ylim=c(0,1.1),xlab="Mult del esfuerzo", ylab="B/B0", main="Reduccion del stock")
+barplot(Red_stock[1,]~Mult_F,ylim=c(0,1.1),xlab="Mult del esfuerzo", ylab="B/B0", main="Reduccion del stock LP")
 abline(h=target,  col = "red",lty = 2,lwd=2)
 box()
 
@@ -422,7 +428,7 @@ box()
 riesgo=1-pnorm(Red_stock[1,],target,Red_stock[2,])
 riesgo_crash=1-pnorm(Red_stock[1,],0.5*target,Red_stock[2,])
 
-plot(Mult_F,riesgo,type = "p",ylim=c(0,1.1),xlab="Mult del esfuerzo", ylab="p(B<Brms)", main="Riesgo largo plazo")
+plot(Mult_F,riesgo,type = "p",ylim=c(0,1.1),xlab="Mult del esfuerzo", ylab="p(B<Brms)", main="Riesgo LP")
 lines(Mult_F,riesgo,col="red",lwd=2)
 text(Mult_F*1.02,riesgo,round(riesgo,3))
 grid(nx = NULL, ny = NULL, lty = 2, col = "gray",lwd = 1)

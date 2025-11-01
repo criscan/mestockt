@@ -539,7 +539,7 @@ FUNCTION Eval_abundancia
 
  N(1)=No; 
  BD(1)=sum(elem_prod(elem_prod(N(1),exp(-dt(1)*Z(1)))*Prob_talla,elem_prod(msex,Wmed)));
- Rpred=No(1);//
+ Rpred=mfexp(log_Ro);//
 
 
 // se estima la sobrevivencia por edad(a+1) y año(t+1)
@@ -693,12 +693,6 @@ FUNCTION Eval_funcion_objetivo
 // lognormal Ninicial y Reclutas
  if(active(dev_log_Ro)){
  likeval(6)=1./(2*square(sigmaR))*norm2(dev_log_Ro);}
-
- //if(active(dev_log_No)){
- //likeval(7)=1./(2*square(sigmaR))*norm2(dev_log_No);}
-
-
-
 
  if (active(log_F)){
  penalty+=1000*norm2(log_F-mean(log_F));}

@@ -203,7 +203,7 @@ PARAMETER_SECTION
  init_number log_aedad(opt_aedad)
  init_number log_bedad(opt_bedad)
  init_number log_M(opt_M)
- init_number log_h(opt_h)
+ init_bounded_number log_h(-1.609188,0,opt_h)
 
 //---------------------------------------------------------------------------------
 //Defino las variables de estado 
